@@ -1,0 +1,70 @@
+{
+  "$comment": "THE hand-written part. Four packages -- ui, js, php, py -- are generated from this directory and are never edited. Fix this file, then regenerate. Every API fact here is read from Google's own discovery document (https://docs.googleapis.com/$discovery/rest?version=v1), not from docs prose.",
+
+  "connectorApi": 1,
+
+  "service": "google_docs",
+  "title": "Google Docs",
+  "domain": "productivity",
+  "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/create",
+
+  "auth": "oauth2",
+  "requires": ["accessToken", "refreshToken", "clientId", "clientSecret"],
+  "authorize": {
+    "kind": "bearer",
+    "credential": "accessToken"
+  },
+
+  "oauth": {
+    "flow": "authorization_code",
+    "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "scopes": ["https://www.googleapis.com/auth/documents"],
+    "accessTokenCredential": "accessToken",
+    "refreshTokenCredential": "refreshToken",
+    "accessTokenTtlSeconds": 3600,
+    "$scopeComment": "The product-specific documents scope is one of the three scopes the create method declares. The method also accepts drive and drive.file, but this connector does not need authority over non-Docs Drive files.",
+    "$comment": "The package DECLARES the dance and does not perform it. A consent screen needs a browser, a redirect URI and somewhere to persist the result, and all three belong to the host. Google's access tokens last ONE HOUR, so a connection that is not refreshed stops working within the day -- which is why refreshToken is required rather than optional."
+  },
+
+  "sandbox": "none",
+  "$sandboxComment": "CHECKED. Google has no separate test estate for Docs: the discovery document exposes one live root URL, and a test document is a real document in somebody's real Drive. Anything this action creates is created for real.",
+  "sandboxNote": "Google has no sandbox for Docs. A test document is a real one in a real Drive, so every create is real -- use the faker while developing and clean up any live test documents.",
+
+  "baseUrls": {
+    "live": "https://docs.googleapis.com"
+  },
+
+  "encoding": "json",
+
+  "credentialFields": [
+    {
+      "key": "clientId",
+      "label": "OAuth client ID",
+      "scope": "provider",
+      "secret": false,
+      "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+    },
+    {
+      "key": "clientSecret",
+      "label": "OAuth client secret",
+      "scope": "provider",
+      "secret": true,
+      "help": "The client secret for the same OAuth app. One value for the whole installation."
+    },
+    {
+      "key": "accessToken",
+      "label": "Access token",
+      "scope": "account",
+      "secret": true,
+      "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+    },
+    {
+      "key": "refreshToken",
+      "label": "Refresh token",
+      "scope": "account",
+      "secret": true,
+      "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+    }
+  ]
+}

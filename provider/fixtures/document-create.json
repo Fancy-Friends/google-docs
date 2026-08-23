@@ -1,0 +1,9 @@
+{
+  "$comment": "A Document returned directly at the response top level, not wrapped in a `document` property. documentId and title are properties of Google's Document response schema and are the stable surface this create action reads; the discovery method does not promise which optional content fields are populated on creation.",
+  "operation": "document_create",
+
+  "response": {
+    "documentId": { "$fake": "id", "prefix": "1Doc" },
+    "title": { "$config": "title", "as": "string", "default": "Untitled document" }
+  }
+}

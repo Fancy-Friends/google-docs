@@ -1,0 +1,43 @@
+{
+  "$comment": "Read from Google's own discovery document, not docs prose: documents.create -> POST v1/documents, request Document, response Document. The method creates a BLANK document and ignores every request field except title, including any supplied content.",
+  "operation": "document_create",
+  "kind": "document",
+  "title": "Google Docs document",
+  "description": "Create a blank Google Docs document.",
+  "summary": "create a blank document",
+  "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/create",
+  "sideEffects": "unsafe-to-replay",
+
+  "$idempotencyComment": "Google offers no idempotency key on documents.create -- the discovery method declares no parameters and no idempotency header. So this is honestly unsafe-to-replay with no way to make it safe: a retried durable run creates a SECOND document.",
+
+  "request": {
+    "method": "POST",
+    "path": "/v1/documents",
+    "encoding": "json"
+  },
+
+  "config": [
+    {
+      "type": "text",
+      "key": "title",
+      "label": "Title",
+      "required": true,
+      "description": "The title of the new blank document.",
+      "send": { "as": "title", "value": "string" },
+      "$comment": "Document is a large response schema, but create is not a way to seed one. Google's method says all request fields other than title -- including content -- are ignored, so exposing a body or tabs field would accept configuration that can never work."
+    }
+  ],
+
+  "outputShape": [
+    { "path": "data.documentId", "type": "string", "description": "The id of the created document." },
+    { "path": "data.title", "type": "string", "description": "The title Google stored." }
+  ],
+
+  "$outputComment": "The Document is returned at the HTTP response top level. The connector runtime places that body under `data`; there is no provider-specific wrapper such as `{document: ...}`.",
+
+  "contract": {
+    "$comment": "The exact Document properties this action sends and reads. Drift-check projects these names from the discovery schema instead of treating the endpoint as unresearched.",
+    "sends": ["title"],
+    "reads": ["documentId", "title"]
+  }
+}
