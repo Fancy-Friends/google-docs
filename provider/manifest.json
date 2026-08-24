@@ -22,6 +22,8 @@
     "scopes": ["https://www.googleapis.com/auth/documents"],
     "accessTokenCredential": "accessToken",
     "refreshTokenCredential": "refreshToken",
+    "$refreshTokenRotates": "Reusable. A refresh response carries access_token, expires_in, scope and token_type — no refresh_token — and Google’s own expiry rule is \"the refresh token has not been used for six months\", which is a statement about a token that is PERSISTED AND REPLAYED. Under rotation it would change hourly and that rule could never fire.",
+    "refreshTokenRotates": false,
     "accessTokenTtlSeconds": 3600,
     "$scopeComment": "The product-specific documents scope is one of the three scopes the create method declares. The method also accepts drive and drive.file, but this connector does not need authority over non-Docs Drive files.",
     "$comment": "The package DECLARES the dance and does not perform it. A consent screen needs a browser, a redirect URI and somewhere to persist the result, and all three belong to the host. Google's access tokens last ONE HOUR, so a connection that is not refreshed stops working within the day -- which is why refreshToken is required rather than optional."
