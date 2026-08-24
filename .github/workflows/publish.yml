@@ -305,6 +305,17 @@ jobs:
             head -c 2000 /tmp/pypi-error.txt
             echo
             echo "::endgroup::"
+
+            # And the REAL upload again, verbosely, for the response HEADERS.
+            # A 429 without a Retry-After is a different animal from one with
+            # it, and the body PyPI sends is the bare reason phrase — so the
+            # headers are the only place left that can say WHICH limit and for
+            # how long. twine prints them; the credential is a masked secret and
+            # is not among them.
+            echo "::group::The failing upload, verbosely"
+            twine upload --verbose dist/* || true
+            echo "::endgroup::"
+
             exit 1
           fi
         env:
