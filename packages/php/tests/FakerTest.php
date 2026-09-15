@@ -30,6 +30,12 @@ it('document_create fakes the shape Google Docs publishes', function () {
 
     $faked = GoogleDocsFaker::respond('document_create', ['config' => $config, 'fake' => $fake]);
 
+    // Through JSON and back, because a faked EMPTY object is a stdClass — the only
+    // PHP value that spells `{}` on the wire — and `toBe` compares objects by
+    // identity. This asserts the VALUES; the `{}`-versus-`[]` spelling is what
+    // weaver's cross-runtime parity suite asserts, byte for byte.
+    $faked = json_decode((string) json_encode($faked), true, 512, JSON_THROW_ON_ERROR);
+
     expect($faked)->toBe([
         'documentId' => '1Doc_fake_b97c96715de6',
         'title' => 'Untitled document',

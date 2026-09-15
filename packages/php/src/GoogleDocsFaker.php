@@ -48,7 +48,7 @@ final class GoogleDocsFaker
     }
 
     /** @param array<string,mixed> $config */
-    private static function DocumentCreate(array $config, mixed $fake): array
+    private static function DocumentCreate(array $config, mixed $fake): array|\stdClass
     {
         return [
         'documentId' => $fake->id('1Doc'),
