@@ -1,0 +1,57 @@
+{
+  "$comment": "documents.batchUpdate -> POST v1/documents/{documentId}:batchUpdate, request BatchUpdateDocumentRequest, response BatchUpdateDocumentResponse. Read from Google's own discovery document 2026-10-01. Google's batchUpdate takes an ARRAY of typed Request objects -- dozens of kinds (insertText, deleteContentRange, replaceAllText, updateTextStyle, insertTable, ...) -- and this action builds exactly ONE: a single insertText request. The general escape hatch (an author-supplied requests array) is deliberately NOT offered -- it needs a config shape (arbitrary polymorphic objects) nothing in this estate has used before, the same bar document_create's own deferred content field never cleared. insertText is the one operation that actually answers Fancy's complaint: a blank document created with no way to put text in it.",
+  "operation": "text_insert",
+  "kind": "text_insert",
+  "title": "Insert text into a Google Doc",
+  "description": "Insert plain text at a position in an existing document's body.",
+  "summary": "insert text",
+  "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate",
+  "sideEffects": "unsafe-to-replay",
+  "$idempotencyComment": "batchUpdate declares no idempotency key. A retry inserts the text a SECOND time at the same index -- never detects or merges with the first attempt.",
+
+  "request": {
+    "method": "POST",
+    "path": "/v1/documents/{documentId}:batchUpdate",
+    "encoding": "json"
+  },
+
+  "config": [
+    {
+      "type": "text",
+      "key": "documentId",
+      "label": "Document ID",
+      "required": true,
+      "description": "From document_create's data.documentId, or the id in the document's own URL.",
+      "send": { "in": "path", "as": "documentId", "value": "string" }
+    },
+    {
+      "type": "textarea",
+      "key": "text",
+      "label": "Text",
+      "required": true,
+      "description": "Inserted verbatim. A newline in it starts a new paragraph, carrying the style of whatever paragraph the insertion point sits in.",
+      "send": { "as": "requests.0.insertText.text", "value": "string" }
+    },
+    {
+      "type": "number",
+      "key": "index",
+      "label": "Insert at index",
+      "required": true,
+      "default": 1,
+      "min": 1,
+      "description": "A zero-based position in UTF-16 code units, but 0 itself is never valid -- Google's body content starts at index 1. 1 is the very beginning of a freshly created blank document. To append after existing content, read the document's own length first (not yet offered by this connector) and insert there instead.",
+      "send": { "as": "requests.0.insertText.location.index", "value": "integer", "min": 1 }
+    }
+  ],
+
+  "outputShape": [
+    { "path": "data.documentId", "type": "string", "description": "Echoes what was sent." },
+    { "path": "data.replies", "type": "array", "description": "One entry per request sent -- one here. insertText's own reply carries nothing; the array is present and empty-shaped rather than a usable result." },
+    { "path": "mode", "type": "string", "description": "Which estate this ran against. Google has no sandbox, so: fake or live." }
+  ],
+
+  "contract": {
+    "sends": ["documentId", "requests"],
+    "reads": ["documentId", "replies"]
+  }
+}

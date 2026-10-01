@@ -18,10 +18,11 @@ from __future__ import annotations
 
 from ._fake import FakeValues
 from .actions.document_create import document_create
+from .actions.text_insert import text_insert
 from .faker import respond
 from .service import BASE_URLS, CONNECTOR_API_VERSION, REQUIRES, SANDBOX, SERVICE, TITLE, descriptor
 
-__version__ = "0.3.4"
+__version__ = "0.4.0"
 
 __all__ = [
     "BASE_URLS",
@@ -34,4 +35,5 @@ __all__ = [
     "descriptor",
     "document_create",
     "respond",
+    "text_insert",
 ]

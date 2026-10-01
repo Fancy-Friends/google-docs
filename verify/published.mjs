@@ -49,6 +49,16 @@ const GOLDENS = [
       "documentId": "1Doc_fake_b97c96715de6",
       "title": "Untitled document"
     }
+  },
+  {
+    "operation": "text_insert",
+    "config": {},
+    "expected": {
+      "documentId": "1Doc_fake_2a078907bfc7",
+      "replies": [
+        {}
+      ]
+    }
   }
 ];
 
@@ -65,7 +75,7 @@ for (const { operation, config, expected } of GOLDENS) {
 
 // The ui package is a separate tarball, and js depends on it by its
 // published name — so this also proves that dependency resolves.
-assert.equal(GOOGLE_DOCS_KINDS.length, 1);
+assert.equal(GOOGLE_DOCS_KINDS.length, 2);
 for (const kind of GOOGLE_DOCS_KINDS) {
   const keys = kind.configSchema.map((field) => field.key);
   assert.equal(keys[0], "connection");

@@ -77,6 +77,18 @@ Create a blank Google Docs document.
 |---|---|---|
 | `title` | yes | The title of the new blank document. |
 
+#### `text_insert` — Insert text into a Google Doc
+
+Insert plain text at a position in an existing document's body.
+
+`POST /v1/documents/{documentId}:batchUpdate` · **unsafe to replay** — a retried durable run does it TWICE
+
+| Input | Required | What it is |
+|---|---|---|
+| `documentId` | yes | From document_create's data.documentId, or the id in the document's own URL. |
+| `text` | yes | Inserted verbatim. A newline in it starts a new paragraph, carrying the style of whatever paragraph the insertion point sits in. |
+| `index` | yes | A zero-based position in UTF-16 code units, but 0 itself is never valid -- Google's body content starts at index 1. 1 is the very beginning of a freshly created blank document. To append after existing content, read the document's own length first (not yet offered by this connector) and insert there instead. |
+
 ## Run it before you have credentials
 
 Every operation ships a **faker**, whether or not Google Docs has a sandbox. Set a

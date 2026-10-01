@@ -22,6 +22,7 @@ import assert from "node:assert/strict";
 import type { PreparedRequest } from "@particle-academy/fancy-connector-core";
 
 import { googleDocsDocumentCreate } from "../src/actions/document-create.js";
+import { googleDocsTextInsert } from "../src/actions/text-insert.js";
 
 /** Capture the prepared request instead of sending it. */
 function capture() {
@@ -62,6 +63,38 @@ test("document_create sends POST /v1/documents", async () => {
 
   assert.deepEqual(JSON.parse(String(seen[0]!.body ?? "{}")), {
     "title": "example-title"
+  });
+});
+
+test("text_insert sends POST /v1/documents/{documentId}:batchUpdate", async () => {
+  const { seen, transport } = capture();
+
+  await googleDocsTextInsert({
+    config: {
+      "documentId": "example-documentId",
+      "text": "example-text",
+      "index": 1000
+    },
+    credentials: CREDENTIALS,
+    mode: "live",
+    transport,
+  });
+
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0]!.method, "POST");
+  assert.ok(new URL(seen[0]!.url).pathname.endsWith("/v1/documents/example-documentId:batchUpdate"), seen[0]!.url);
+
+  assert.deepEqual(JSON.parse(String(seen[0]!.body ?? "{}")), {
+    "requests": [
+      {
+        "insertText": {
+          "text": "example-text",
+          "location": {
+            "index": 1000
+          }
+        }
+      }
+    ]
   });
 });
 

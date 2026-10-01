@@ -36,6 +36,7 @@ final class GoogleDocsFaker
 
         return match ($operation) {
             'document_create' => self::DocumentCreate($config, $fake),
+            'text_insert' => self::TextInsert($config, $fake),
             default => throw new \InvalidArgumentException(
                 // A faker asked for an operation it has no shape for must SAY so.
                 // Making something up would produce a green run whose output
@@ -53,6 +54,17 @@ final class GoogleDocsFaker
         return [
         'documentId' => $fake->id('1Doc'),
         'title' => ((($v = $config['title'] ?? null) !== null && $v !== '') ? (string) $v : 'Untitled document'),
+    ];
+    }
+
+    /** @param array<string,mixed> $config */
+    private static function TextInsert(array $config, mixed $fake): array|\stdClass
+    {
+        return [
+        'documentId' => ((($v = $config['documentId'] ?? null) !== null && $v !== '') ? (string) $v : $fake->id('1Doc')),
+        'replies' => [
+            new \stdClass(),
+        ],
     ];
     }
 }

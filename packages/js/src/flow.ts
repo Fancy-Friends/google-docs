@@ -30,9 +30,11 @@ import { GOOGLE_DOCS } from "./service.js";
 
 import {
   googleDocsDocumentKind,
+  googleDocsTextInsertKind,
 } from "@particle-academy/google-docs-ui";
 
 import { googleDocsDocumentCreate } from "./actions/document-create.js";
+import { googleDocsTextInsert } from "./actions/text-insert.js";
 
 export const googleDocsDocumentExecutor: NodeExecutor = async (ctx) => {
   const config = ((ctx.node.data as { config?: Record<string, unknown> })?.config ?? {});
@@ -52,7 +54,26 @@ export const googleDocsDocumentExecutor: NodeExecutor = async (ctx) => {
   return { __port: "out", value: result };
 };
 
+export const googleDocsTextInsertExecutor: NodeExecutor = async (ctx) => {
+  const config = ((ctx.node.data as { config?: Record<string, unknown> })?.config ?? {});
+
+  const result = await googleDocsTextInsert({
+    config,
+    input: ctx.inputs?.in,
+  });
+
+  ctx.emit({
+    type: "log",
+    level: "info",
+    nodeId: ctx.node.id,
+    message: `google_docs text_insert ${(result.data as { id?: string })?.id} (${result.mode})`,
+  });
+
+  return { __port: "out", value: result };
+};
+
 /** The kinds a TypeScript host registers. */
 export const GOOGLE_DOCS_RUNNABLE_KINDS: NodeKindDefinition[] = [
   { ...googleDocsDocumentKind, executor: googleDocsDocumentExecutor },
+  { ...googleDocsTextInsertKind, executor: googleDocsTextInsertExecutor },
 ];

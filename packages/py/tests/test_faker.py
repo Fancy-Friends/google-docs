@@ -33,6 +33,20 @@ def test_document_create_fakes_the_published_shape() -> None:
     }
 
 
+def test_text_insert_fakes_the_published_shape() -> None:
+    config = {}
+    fake = FakeValues(seed_for_call("google_docs", "text_insert", config))
+
+    faked = respond("text_insert", {"config": config, "fake": fake})
+
+    assert faked == {
+        "documentId": "1Doc_fake_2a078907bfc7",
+        "replies": [
+            {},
+        ],
+    }
+
+
 def test_an_operation_with_no_fixture_raises_rather_than_inventing_a_shape() -> None:
     fake = FakeValues(seed_for_call("google_docs", "no_such_operation", {}))
 

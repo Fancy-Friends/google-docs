@@ -30,10 +30,22 @@ function fakeDocumentCreate({ config, fake }: FakeRequest): unknown {
   };
 }
 
+function fakeTextInsert({ config, fake }: FakeRequest): unknown {
+  return {
+    "documentId": (config.documentId !== undefined && config.documentId !== null && config.documentId !== "" ? String(config.documentId) : fake.id("1Doc")),
+    "replies": [
+      {},
+    ],
+  };
+}
+
 export const googleDocsFaker: ConnectorFaker = (operation, request) => {
   switch (operation) {
     case "document_create":
       return fakeDocumentCreate(request);
+
+    case "text_insert":
+      return fakeTextInsert(request);
 
     default:
       // A faker asked for an operation it has no shape for must SAY so. Making

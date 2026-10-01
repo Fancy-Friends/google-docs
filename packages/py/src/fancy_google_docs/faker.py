@@ -47,6 +47,19 @@ def _document_create(config: dict[str, Any], fake: FakeValues) -> Any:
     }
 
 
+def _text_insert(config: dict[str, Any], fake: FakeValues) -> Any:
+    return {
+        "documentId": (
+            str(_v)
+            if (_v := config.get("documentId")) is not None and _v != ""
+            else fake.id("1Doc")
+        ),
+        "replies": [
+            {},
+        ],
+    }
+
+
 def respond(operation: str, request: dict[str, Any]) -> Any:
     """Dispatch to the fixture for one operation."""
     config: dict[str, Any] = request.get("config") or {}
@@ -54,6 +67,9 @@ def respond(operation: str, request: dict[str, Any]) -> Any:
 
     if operation == "document_create":
         return _document_create(config, fake)
+
+    if operation == "text_insert":
+        return _text_insert(config, fake)
 
     # A faker asked for an operation it has no shape for must SAY so. Making
     # something up would produce a green run whose output silently has none of

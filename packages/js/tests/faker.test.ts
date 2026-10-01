@@ -36,6 +36,19 @@ test("document_create fakes the shape Google Docs publishes", () => {
   });
 });
 
+test("text_insert fakes the shape Google Docs publishes", () => {
+  const config = {};
+
+  const faked = googleDocsFaker("text_insert", fakeRequest("google_docs", "text_insert", config));
+
+  assert.deepEqual(faked, {
+    "documentId": "1Doc_fake_2a078907bfc7",
+    "replies": [
+      {}
+    ]
+  });
+});
+
 test("an operation with no fixture throws rather than inventing a shape", () => {
   assert.throws(() => googleDocsFaker("no_such_operation", fakeRequest("google_docs", "no_such_operation", {})), /no fake response/);
 });

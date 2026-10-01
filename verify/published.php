@@ -35,6 +35,16 @@ $goldens = [
             'title' => 'Untitled document',
         ],
     ],
+    [
+        'operation' => 'text_insert',
+        'config' => [],
+        'expected' => [
+            'documentId' => '1Doc_fake_2a078907bfc7',
+            'replies' => [
+                [],
+            ],
+        ],
+    ],
 ];
 
 foreach ($goldens as $golden) {

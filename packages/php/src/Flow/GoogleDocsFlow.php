@@ -40,6 +40,7 @@ final class GoogleDocsFlow
     /** @var list<class-string> */
     public const EXECUTORS = [
         DocumentExecutor::class,
+        TextInsertExecutor::class,
     ];
 
     /**

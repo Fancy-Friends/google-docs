@@ -8,7 +8,9 @@
 # npm run provider -- google_docs
 
 from .document_create import document_create
+from .text_insert import text_insert
 
 __all__ = [
     "document_create",
+    "text_insert",
 ]

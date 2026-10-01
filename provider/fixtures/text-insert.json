@@ -1,0 +1,9 @@
+{
+  "$comment": "batchUpdate's response for a single insertText request: the documentId and one (empty) reply. Google's own schema -- Response for insertText carries no fields.",
+  "operation": "text_insert",
+
+  "response": {
+    "documentId": { "$config": "documentId", "as": "string", "fallback": { "$fake": "id", "prefix": "1Doc" } },
+    "replies": [{}]
+  }
+}

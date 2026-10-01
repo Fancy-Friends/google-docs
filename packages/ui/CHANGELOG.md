@@ -8,6 +8,21 @@ The four packages share one version, because they are generated from one
 `provider/` definition and a version that meant something different in each
 would be a version nobody could reason about.
 
+## [0.4.0] — 2026-10-01
+
+### Added
+
+- **`text_insert`** — insert plain text into an existing document's body
+  (`documents.batchUpdate`, a single `insertText` request). No scope
+  change. Until now `document_create` could only make a BLANK document
+  with no way to ever put content in it.
+- Deliberately NOT included: the general `batchUpdate` escape hatch (an
+  author-supplied array of Google's dozens of typed request kinds —
+  `deleteContentRange`, `replaceAllText`, `insertTable`, text styling,
+  ...). That needs an array-of-polymorphic-objects config shape nothing
+  in this estate has used before — a real second need, not a first
+  guess, same bar as everything in `vocabulary-deferred.md`.
+
 ## [0.3.4] — 2026-09-12
 
 ### Changed
