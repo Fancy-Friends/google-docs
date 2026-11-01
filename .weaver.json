@@ -52,7 +52,7 @@
     "packages/py/pyproject.toml": "f3fea3f3881e782e8d67fae44197b9fc1ca705276830b8cd7612128cc8285bf6",
     "packages/py/src/fancy_google_docs/__init__.py": "73ed670e342ab9a6f56d736e888bb322bb6c4fc2323fce83e2d4b4a8f6c4d31f",
     "packages/py/src/fancy_google_docs/_fake.py": "74f1ed589799f05183c0ea9aa2adb2f3eb393e0367d311939b76e1ea1ae9d633",
-    "packages/py/src/fancy_google_docs/_runtime.py": "8760f2b6c30466951744912b51d5c89f5f050770a5370b35bcd8c8c0ddd312a0",
+    "packages/py/src/fancy_google_docs/_runtime.py": "75a8b59067deb4905785a66f56be67c396b233d49f3b7a46846fd5d8e95cee63",
     "packages/py/src/fancy_google_docs/actions/__init__.py": "e410f871ab13fd0a3bb39fbaefd9a94063354ba6c31276a4697dac2b728ddadb",
     "packages/py/src/fancy_google_docs/actions/document_create.py": "51c063a6a93ced46b34f285bc5b34b5187e14df0e68a53ea6fbee11671a7dce0",
     "packages/py/src/fancy_google_docs/actions/text_insert.py": "d90a6a1c4caaf7443fa88779fbe97044185d56bc1e321a581b01cf85ec73b3b2",
