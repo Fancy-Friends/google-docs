@@ -36,6 +36,22 @@ def _as_number(value: Any) -> float | None:
         return None
 
 
+def _batch_update(config: dict[str, Any], fake: FakeValues) -> Any:
+    return {
+        "documentId": (
+            str(_v)
+            if (_v := config.get("documentId")) is not None and _v != ""
+            else fake.id("1Doc")
+        ),
+        "replies": [
+            {},
+        ],
+        "writeControl": {
+            "requiredRevisionId": fake.hex(16),
+        },
+    }
+
+
 def _document_create(config: dict[str, Any], fake: FakeValues) -> Any:
     return {
         "documentId": fake.id("1Doc"),
@@ -60,16 +76,42 @@ def _text_insert(config: dict[str, Any], fake: FakeValues) -> Any:
     }
 
 
+def _text_replace(config: dict[str, Any], fake: FakeValues) -> Any:
+    return {
+        "documentId": (
+            str(_v)
+            if (_v := config.get("documentId")) is not None and _v != ""
+            else fake.id("1Doc")
+        ),
+        "replies": [
+            {
+                "replaceAllText": {
+                    "occurrencesChanged": fake.int(1, 9),
+                },
+            },
+        ],
+        "writeControl": {
+            "requiredRevisionId": fake.hex(16),
+        },
+    }
+
+
 def respond(operation: str, request: dict[str, Any]) -> Any:
     """Dispatch to the fixture for one operation."""
     config: dict[str, Any] = request.get("config") or {}
     fake: FakeValues = request["fake"]
+
+    if operation == "batch_update":
+        return _batch_update(config, fake)
 
     if operation == "document_create":
         return _document_create(config, fake)
 
     if operation == "text_insert":
         return _text_insert(config, fake)
+
+    if operation == "text_replace":
+        return _text_replace(config, fake)
 
     # A faker asked for an operation it has no shape for must SAY so. Making
     # something up would produce a green run whose output silently has none of

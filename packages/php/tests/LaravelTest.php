@@ -24,16 +24,18 @@ it('registers through its service provider and merges its config', function () {
     expect(config('connectors.google-docs.credentials'))->toBeArray();
 });
 
-it('fakes document_create and records it for assertSent', function () {
+it('fakes batch_update and records it for assertSent', function () {
     TestApp::boot();
     GoogleDocs::fake();
     $config = [
-        'title' => 'example-title',
+        'documentId' => 'example-documentId',
+        'requests' => '[{"type":"section","text":{"type":"mrkdwn","text":"Ticket *42*"}}]',
+        'requiredRevisionId' => 'example-requiredRevisionId',
     ];
-    $result = GoogleDocs::call('document_create', $config);
+    $result = GoogleDocs::call('batch_update', $config);
 
     expect($result->mode->value)->toBe('fake');
-    GoogleDocs::assertSent('document_create', fn (array $sent): bool => $sent == $config);
+    GoogleDocs::assertSent('batch_update', fn (array $sent): bool => $sent == $config);
     GoogleDocs::assertNotSent('no_such_operation');
     GoogleDocs::assertSentCount(1);
 });

@@ -74,6 +74,18 @@ The refresh tokens do **not** rotate: the same one is reusable, so a refresh may
 
 ### Actions
 
+#### `batch_update` — Batch update a Google Doc
+
+Apply a list of Google Doc API requests to a document, all or none.
+
+`POST /v1/documents/{documentId}:batchUpdate` · **unsafe to replay** — a retried durable run does it TWICE
+
+| Input | Required | What it is |
+|---|---|---|
+| `documentId` | yes | From document_create's data.documentId, or the id in the document's own URL. |
+| `requests` | yes | Google's Request objects, in order. Example: [{"replaceAllText":{"containsText":{"text":"{{name}}","matchCase":true},"replaceText":"Ada"}}]. |
+| `requiredRevisionId` | no | Optional. The document's revisionId as you last read it. If the document has changed since, Google refuses the whole batch with a 400 instead of applying it to content you have not seen. |
+
 #### `document_create` — Google Docs document
 
 Create a blank Google Docs document.
@@ -95,6 +107,20 @@ Insert plain text at a position in an existing document's body.
 | `documentId` | yes | From document_create's data.documentId, or the id in the document's own URL. |
 | `text` | yes | Inserted verbatim. A newline in it starts a new paragraph, carrying the style of whatever paragraph the insertion point sits in. |
 | `index` | yes | A zero-based position in UTF-16 code units, but 0 itself is never valid -- Google's body content starts at index 1. 1 is the very beginning of a freshly created blank document. To append after existing content, read the document's own length first (not yet offered by this connector) and insert there instead. |
+
+#### `text_replace` — Replace text in a Google Doc
+
+Replace every occurrence of a string in a document.
+
+`POST /v1/documents/{documentId}:batchUpdate` · **unsafe to replay** — a retried durable run does it TWICE
+
+| Input | Required | What it is |
+|---|---|---|
+| `documentId` | yes | From document_create's data.documentId, or the id in the document's own URL. |
+| `find` | yes | The exact text to find, e.g. {{name}}. Not a regular expression. |
+| `replaceWith` | yes | Inserted in place of every match. Empty is refused: to delete text, use batch_update. |
+| `matchCase` | no | Off matches case-insensitively, which is also what Google does when it is not sent. |
+| `requiredRevisionId` | no | Optional. The document's revisionId as you last read it. If the document has changed since, Google refuses the whole batch with a 400 instead of applying it to content you have not seen. |
 
 ## Run it before you have credentials
 

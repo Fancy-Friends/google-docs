@@ -16,6 +16,19 @@ from fancy_google_docs.faker import respond
 
 GOLDENS = [
     {
+        "operation": "batch_update",
+        "config": {},
+        "expected": {
+            "documentId": "1Doc_fake_b17d7d2cc5c6",
+            "replies": [
+                {},
+            ],
+            "writeControl": {
+                "requiredRevisionId": "4358d3e77da7f1d5",
+            },
+        },
+    },
+    {
         "operation": "document_create",
         "config": {},
         "expected": {
@@ -31,6 +44,23 @@ GOLDENS = [
             "replies": [
                 {},
             ],
+        },
+    },
+    {
+        "operation": "text_replace",
+        "config": {},
+        "expected": {
+            "documentId": "1Doc_fake_97719d3c3e1f",
+            "replies": [
+                {
+                    "replaceAllText": {
+                        "occurrencesChanged": 6,
+                    },
+                },
+            ],
+            "writeControl": {
+                "requiredRevisionId": "3bb5512da3878545",
+            },
         },
     },
 ]

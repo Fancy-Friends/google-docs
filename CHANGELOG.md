@@ -8,6 +8,19 @@ The four packages share one version, because they are generated from one
 `provider/` definition and a version that meant something different in each
 would be a version nobody could reason about.
 
+## [0.7.0] — 2026-11-08
+
+### Added
+
+- **`text_replace`**: replace every occurrence of a string in a document (Google's
+  `replaceAllText`), the template-filling case (`{{name}}` -> a value). Publishes
+  `occurrencesChanged`; 0 means not found, which is not an error.
+- **`batch_update`**: any list of Google Docs API requests, as JSON, applied all
+  or none.
+- Both take an optional **`requiredRevisionId`**: if the document has changed
+  since you read it, Google refuses the whole batch instead of applying it to
+  content you have not seen.
+
 ## [0.6.0] — 2026-11-08
 
 ### Added

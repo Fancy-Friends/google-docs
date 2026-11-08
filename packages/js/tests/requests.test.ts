@@ -21,8 +21,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { PreparedRequest } from "@particle-academy/fancy-connector-core";
 
+import { googleDocsBatchUpdate } from "../src/actions/batch-update.js";
 import { googleDocsDocumentCreate } from "../src/actions/document-create.js";
 import { googleDocsTextInsert } from "../src/actions/text-insert.js";
+import { googleDocsTextReplace } from "../src/actions/text-replace.js";
 
 /** Capture the prepared request instead of sending it. */
 function capture() {
@@ -44,6 +46,40 @@ const CREDENTIALS = {
   "accessToken": "test_accessToken",
   "refreshToken": "test_refreshToken"
 };
+
+test("batch_update sends POST /v1/documents/{documentId}:batchUpdate", async () => {
+  const { seen, transport } = capture();
+
+  await googleDocsBatchUpdate({
+    config: {
+      "documentId": "example-documentId",
+      "requests": "[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Ticket *42*\"}}]",
+      "requiredRevisionId": "example-requiredRevisionId"
+    },
+    credentials: CREDENTIALS,
+    mode: "live",
+    transport,
+  });
+
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0]!.method, "POST");
+  assert.ok(new URL(seen[0]!.url).pathname.endsWith("/v1/documents/example-documentId:batchUpdate"), seen[0]!.url);
+
+  assert.deepEqual(JSON.parse(String(seen[0]!.body ?? "{}")), {
+    "requests": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Ticket *42*"
+        }
+      }
+    ],
+    "writeControl": {
+      "requiredRevisionId": "example-requiredRevisionId"
+    }
+  });
+});
 
 test("document_create sends POST /v1/documents", async () => {
   const { seen, transport } = capture();
@@ -98,12 +134,52 @@ test("text_insert sends POST /v1/documents/{documentId}:batchUpdate", async () =
   });
 });
 
+test("text_replace sends POST /v1/documents/{documentId}:batchUpdate", async () => {
+  const { seen, transport } = capture();
+
+  await googleDocsTextReplace({
+    config: {
+      "documentId": "example-documentId",
+      "find": "example-find",
+      "replaceWith": "example-replaceWith",
+      "matchCase": true,
+      "requiredRevisionId": "example-requiredRevisionId"
+    },
+    credentials: CREDENTIALS,
+    mode: "live",
+    transport,
+  });
+
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0]!.method, "POST");
+  assert.ok(new URL(seen[0]!.url).pathname.endsWith("/v1/documents/example-documentId:batchUpdate"), seen[0]!.url);
+
+  assert.deepEqual(JSON.parse(String(seen[0]!.body ?? "{}")), {
+    "requests": [
+      {
+        "replaceAllText": {
+          "containsText": {
+            "text": "example-find",
+            "matchCase": true
+          },
+          "replaceText": "example-replaceWith"
+        }
+      }
+    ],
+    "writeControl": {
+      "requiredRevisionId": "example-requiredRevisionId"
+    }
+  });
+});
+
 test("the credential is placed the way the provider wants it", async () => {
   const { seen, transport } = capture();
 
-  await googleDocsDocumentCreate({
+  await googleDocsBatchUpdate({
     config: {
-      "title": "example-title"
+      "documentId": "example-documentId",
+      "requests": "[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Ticket *42*\"}}]",
+      "requiredRevisionId": "example-requiredRevisionId"
     },
     credentials: CREDENTIALS,
     mode: "live",
@@ -120,13 +196,16 @@ test("a missing required field is refused BEFORE anything is sent", async () => 
   const { seen, transport } = capture();
 
   await assert.rejects(
-    googleDocsDocumentCreate({
-      config: {},
+    googleDocsBatchUpdate({
+      config: {
+        "requests": "[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"Ticket *42*\"}}]",
+        "requiredRevisionId": "example-requiredRevisionId"
+      },
       credentials: CREDENTIALS,
       mode: "live",
       transport,
     }),
-    new RegExp("title"),
+    new RegExp("documentId"),
   );
 
   assert.equal(seen.length, 0, "the request must not have been sent");

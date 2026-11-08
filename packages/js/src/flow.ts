@@ -29,12 +29,34 @@ import {
 import { GOOGLE_DOCS } from "./service.js";
 
 import {
+  googleDocsBatchUpdateKind,
   googleDocsDocumentKind,
   googleDocsTextInsertKind,
+  googleDocsTextReplaceKind,
 } from "@particle-academy/google-docs-ui";
 
+import { googleDocsBatchUpdate } from "./actions/batch-update.js";
 import { googleDocsDocumentCreate } from "./actions/document-create.js";
 import { googleDocsTextInsert } from "./actions/text-insert.js";
+import { googleDocsTextReplace } from "./actions/text-replace.js";
+
+export const googleDocsBatchUpdateExecutor: NodeExecutor = async (ctx) => {
+  const config = ((ctx.node.data as { config?: Record<string, unknown> })?.config ?? {});
+
+  const result = await googleDocsBatchUpdate({
+    config,
+    input: ctx.inputs?.in,
+  });
+
+  ctx.emit({
+    type: "log",
+    level: "info",
+    nodeId: ctx.node.id,
+    message: `google_docs batch_update ${(result.data as { id?: string })?.id} (${result.mode})`,
+  });
+
+  return { __port: "out", value: result };
+};
 
 export const googleDocsDocumentExecutor: NodeExecutor = async (ctx) => {
   const config = ((ctx.node.data as { config?: Record<string, unknown> })?.config ?? {});
@@ -72,8 +94,28 @@ export const googleDocsTextInsertExecutor: NodeExecutor = async (ctx) => {
   return { __port: "out", value: result };
 };
 
+export const googleDocsTextReplaceExecutor: NodeExecutor = async (ctx) => {
+  const config = ((ctx.node.data as { config?: Record<string, unknown> })?.config ?? {});
+
+  const result = await googleDocsTextReplace({
+    config,
+    input: ctx.inputs?.in,
+  });
+
+  ctx.emit({
+    type: "log",
+    level: "info",
+    nodeId: ctx.node.id,
+    message: `google_docs text_replace ${(result.data as { id?: string })?.id} (${result.mode})`,
+  });
+
+  return { __port: "out", value: result };
+};
+
 /** The kinds a TypeScript host registers. */
 export const GOOGLE_DOCS_RUNNABLE_KINDS: NodeKindDefinition[] = [
+  { ...googleDocsBatchUpdateKind, executor: googleDocsBatchUpdateExecutor },
   { ...googleDocsDocumentKind, executor: googleDocsDocumentExecutor },
   { ...googleDocsTextInsertKind, executor: googleDocsTextInsertExecutor },
+  { ...googleDocsTextReplaceKind, executor: googleDocsTextReplaceExecutor },
 ];

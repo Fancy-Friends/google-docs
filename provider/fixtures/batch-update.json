@@ -1,0 +1,23 @@
+{
+  "$comment": "One empty reply: the faker cannot know how many requests were sent, and many Request kinds reply with {}.",
+  "operation": "batch_update",
+  "response": {
+    "documentId": {
+      "$config": "documentId",
+      "as": "string",
+      "fallback": {
+        "$fake": "id",
+        "prefix": "1Doc"
+      }
+    },
+    "replies": [
+      {}
+    ],
+    "writeControl": {
+      "requiredRevisionId": {
+        "$fake": "hex",
+        "length": 16
+      }
+    }
+  }
+}

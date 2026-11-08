@@ -21,6 +21,23 @@ from fancy_google_docs._fake import FakeValues, seed_for_call
 from fancy_google_docs.faker import respond
 
 
+def test_batch_update_fakes_the_published_shape() -> None:
+    config = {}
+    fake = FakeValues(seed_for_call("google_docs", "batch_update", config))
+
+    faked = respond("batch_update", {"config": config, "fake": fake})
+
+    assert faked == {
+        "documentId": "1Doc_fake_b17d7d2cc5c6",
+        "replies": [
+            {},
+        ],
+        "writeControl": {
+            "requiredRevisionId": "4358d3e77da7f1d5",
+        },
+    }
+
+
 def test_document_create_fakes_the_published_shape() -> None:
     config = {}
     fake = FakeValues(seed_for_call("google_docs", "document_create", config))
@@ -44,6 +61,27 @@ def test_text_insert_fakes_the_published_shape() -> None:
         "replies": [
             {},
         ],
+    }
+
+
+def test_text_replace_fakes_the_published_shape() -> None:
+    config = {}
+    fake = FakeValues(seed_for_call("google_docs", "text_replace", config))
+
+    faked = respond("text_replace", {"config": config, "fake": fake})
+
+    assert faked == {
+        "documentId": "1Doc_fake_97719d3c3e1f",
+        "replies": [
+            {
+                "replaceAllText": {
+                    "occurrencesChanged": 6,
+                },
+            },
+        ],
+        "writeControl": {
+            "requiredRevisionId": "3bb5512da3878545",
+        },
     }
 
 
