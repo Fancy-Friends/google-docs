@@ -39,8 +39,10 @@ final class GoogleDocsFlow
 {
     /** @var list<class-string> */
     public const EXECUTORS = [
+        BatchUpdateExecutor::class,
         DocumentExecutor::class,
         TextInsertExecutor::class,
+        TextReplaceExecutor::class,
     ];
 
     /**

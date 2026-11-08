@@ -43,6 +43,19 @@ console.log(`  ok   resolved from ${resolved}`);
 
 const GOLDENS = [
   {
+    "operation": "batch_update",
+    "config": {},
+    "expected": {
+      "documentId": "1Doc_fake_b17d7d2cc5c6",
+      "replies": [
+        {}
+      ],
+      "writeControl": {
+        "requiredRevisionId": "4358d3e77da7f1d5"
+      }
+    }
+  },
+  {
     "operation": "document_create",
     "config": {},
     "expected": {
@@ -58,6 +71,23 @@ const GOLDENS = [
       "replies": [
         {}
       ]
+    }
+  },
+  {
+    "operation": "text_replace",
+    "config": {},
+    "expected": {
+      "documentId": "1Doc_fake_97719d3c3e1f",
+      "replies": [
+        {
+          "replaceAllText": {
+            "occurrencesChanged": 6
+          }
+        }
+      ],
+      "writeControl": {
+        "requiredRevisionId": "3bb5512da3878545"
+      }
     }
   }
 ];
@@ -75,7 +105,7 @@ for (const { operation, config, expected } of GOLDENS) {
 
 // The ui package is a separate tarball, and js depends on it by its
 // published name — so this also proves that dependency resolves.
-assert.equal(GOOGLE_DOCS_KINDS.length, 2);
+assert.equal(GOOGLE_DOCS_KINDS.length, 4);
 for (const kind of GOOGLE_DOCS_KINDS) {
   const keys = kind.configSchema.map((field) => field.key);
   assert.equal(keys[0], "connection");

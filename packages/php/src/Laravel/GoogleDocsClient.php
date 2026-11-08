@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace ParticleAcademy\GoogleDocs\Laravel;
 
+use ParticleAcademy\GoogleDocs\Actions\BatchUpdate;
 use ParticleAcademy\GoogleDocs\Actions\DocumentCreate;
 use ParticleAcademy\GoogleDocs\Actions\TextInsert;
+use ParticleAcademy\GoogleDocs\Actions\TextReplace;
 use ParticleAcademy\GoogleDocs\GoogleDocs;
 use InvalidArgumentException;
 use ParticleAcademy\Connectors\ConnectorClient;
@@ -49,10 +51,36 @@ class GoogleDocsClient
         );
 
         return match ($operation) {
+            BatchUpdate::OPERATION => $this->batchUpdate($config, $input, $idempotencyKey, $credentials, $transport),
             DocumentCreate::OPERATION => $this->documentCreate($config, $input, $idempotencyKey, $credentials, $transport),
             TextInsert::OPERATION => $this->textInsert($config, $input, $idempotencyKey, $credentials, $transport),
+            TextReplace::OPERATION => $this->textReplace($config, $input, $idempotencyKey, $credentials, $transport),
             default => throw new InvalidArgumentException('google_docs: '.$operation.' is not an action of this connector.'),
         };
+    }
+
+    /**
+     * @param  array<string,mixed>  $config
+     * @param  array<string,string>  $credentials
+     */
+    private function batchUpdate(array $config, mixed $input, ?string $idempotencyKey, array $credentials, ?Transport $transport): ConnectorResult
+    {
+        unset($idempotencyKey);
+        $result = ($this->client ?? new ConnectorClient)->call(
+            GoogleDocs::descriptor(),
+            BatchUpdate::OPERATION,
+            $config,
+            [
+                'method' => BatchUpdate::METHOD,
+                'path' => BatchUpdate::path($config),
+                'json' => BatchUpdate::body($config),
+            ],
+            $input,
+            credentials: $credentials === [] ? null : $credentials,
+            transport: $transport,
+        );
+
+        return $result;
     }
 
     /**
@@ -94,6 +122,30 @@ class GoogleDocsClient
                 'method' => TextInsert::METHOD,
                 'path' => TextInsert::path($config),
                 'json' => TextInsert::body($config),
+            ],
+            $input,
+            credentials: $credentials === [] ? null : $credentials,
+            transport: $transport,
+        );
+
+        return $result;
+    }
+
+    /**
+     * @param  array<string,mixed>  $config
+     * @param  array<string,string>  $credentials
+     */
+    private function textReplace(array $config, mixed $input, ?string $idempotencyKey, array $credentials, ?Transport $transport): ConnectorResult
+    {
+        unset($idempotencyKey);
+        $result = ($this->client ?? new ConnectorClient)->call(
+            GoogleDocs::descriptor(),
+            TextReplace::OPERATION,
+            $config,
+            [
+                'method' => TextReplace::METHOD,
+                'path' => TextReplace::path($config),
+                'json' => TextReplace::body($config),
             ],
             $input,
             credentials: $credentials === [] ? null : $credentials,

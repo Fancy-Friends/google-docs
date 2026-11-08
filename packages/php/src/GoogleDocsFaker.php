@@ -35,8 +35,10 @@ final class GoogleDocsFaker
         $fake = $request['fake'];
 
         return match ($operation) {
+            'batch_update' => self::BatchUpdate($config, $fake),
             'document_create' => self::DocumentCreate($config, $fake),
             'text_insert' => self::TextInsert($config, $fake),
+            'text_replace' => self::TextReplace($config, $fake),
             default => throw new \InvalidArgumentException(
                 // A faker asked for an operation it has no shape for must SAY so.
                 // Making something up would produce a green run whose output
@@ -46,6 +48,20 @@ final class GoogleDocsFaker
                     .'cannot be developed against, tested, or demonstrated.'
             ),
         };
+    }
+
+    /** @param array<string,mixed> $config */
+    private static function BatchUpdate(array $config, mixed $fake): array|\stdClass
+    {
+        return [
+        'documentId' => ((($v = $config['documentId'] ?? null) !== null && $v !== '') ? (string) $v : $fake->id('1Doc')),
+        'replies' => [
+            new \stdClass(),
+        ],
+        'writeControl' => [
+            'requiredRevisionId' => $fake->hex(16),
+        ],
+    ];
     }
 
     /** @param array<string,mixed> $config */
@@ -64,6 +80,24 @@ final class GoogleDocsFaker
         'documentId' => ((($v = $config['documentId'] ?? null) !== null && $v !== '') ? (string) $v : $fake->id('1Doc')),
         'replies' => [
             new \stdClass(),
+        ],
+    ];
+    }
+
+    /** @param array<string,mixed> $config */
+    private static function TextReplace(array $config, mixed $fake): array|\stdClass
+    {
+        return [
+        'documentId' => ((($v = $config['documentId'] ?? null) !== null && $v !== '') ? (string) $v : $fake->id('1Doc')),
+        'replies' => [
+            [
+                'replaceAllText' => [
+                    'occurrencesChanged' => $fake->int(1, 9),
+                ],
+            ],
+        ],
+        'writeControl' => [
+            'requiredRevisionId' => $fake->hex(16),
         ],
     ];
     }

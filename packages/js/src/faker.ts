@@ -23,6 +23,18 @@
 
 import type { ConnectorFaker, FakeRequest } from "@particle-academy/fancy-connector-core";
 
+function fakeBatchUpdate({ config, fake }: FakeRequest): unknown {
+  return {
+    "documentId": (config.documentId !== undefined && config.documentId !== null && config.documentId !== "" ? String(config.documentId) : fake.id("1Doc")),
+    "replies": [
+      {},
+    ],
+    "writeControl": {
+      "requiredRevisionId": fake.hex(16),
+    },
+  };
+}
+
 function fakeDocumentCreate({ config, fake }: FakeRequest): unknown {
   return {
     "documentId": fake.id("1Doc"),
@@ -39,13 +51,35 @@ function fakeTextInsert({ config, fake }: FakeRequest): unknown {
   };
 }
 
+function fakeTextReplace({ config, fake }: FakeRequest): unknown {
+  return {
+    "documentId": (config.documentId !== undefined && config.documentId !== null && config.documentId !== "" ? String(config.documentId) : fake.id("1Doc")),
+    "replies": [
+      {
+        "replaceAllText": {
+          "occurrencesChanged": fake.int(1, 9),
+        },
+      },
+    ],
+    "writeControl": {
+      "requiredRevisionId": fake.hex(16),
+    },
+  };
+}
+
 export const googleDocsFaker: ConnectorFaker = (operation, request) => {
   switch (operation) {
+    case "batch_update":
+      return fakeBatchUpdate(request);
+
     case "document_create":
       return fakeDocumentCreate(request);
 
     case "text_insert":
       return fakeTextInsert(request);
+
+    case "text_replace":
+      return fakeTextReplace(request);
 
     default:
       // A faker asked for an operation it has no shape for must SAY so. Making

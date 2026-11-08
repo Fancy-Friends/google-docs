@@ -18,15 +18,21 @@
  */
 
 export * from "./service.js";
+export * from "./kinds/batch-update.js";
 export * from "./kinds/document-create.js";
 export * from "./kinds/text-insert.js";
+export * from "./kinds/text-replace.js";
 
 import type { NodeKindDefinition } from "@particle-academy/fancy-flow/engine";
+import { googleDocsBatchUpdateKind } from "./kinds/batch-update.js";
 import { googleDocsDocumentKind } from "./kinds/document-create.js";
 import { googleDocsTextInsertKind } from "./kinds/text-insert.js";
+import { googleDocsTextReplaceKind } from "./kinds/text-replace.js";
 
 /** Every Google Docs kind, for a host that registers the lot. */
 export const GOOGLE_DOCS_KINDS: NodeKindDefinition[] = [
+  googleDocsBatchUpdateKind,
   googleDocsDocumentKind,
   googleDocsTextInsertKind,
+  googleDocsTextReplaceKind,
 ];

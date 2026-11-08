@@ -1,0 +1,112 @@
+{
+  "$comment": "ONE replaceAllText request through v1/documents/{documentId}:batchUpdate: every occurrence of a string, replaced, across the whole document. ReplaceAllTextRequest {containsText: SubstringMatchCriteria {text, matchCase}, replaceText}; the reply is ReplaceAllTextResponse {occurrencesChanged}. Read from Google's discovery document 2026-11-08. The template-filling case: {{name}} -> a value.",
+  "operation": "text_replace",
+  "kind": "text_replace",
+  "title": "Replace text in a Google Doc",
+  "description": "Replace every occurrence of a string in a document.",
+  "summary": "replace text",
+  "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate",
+  "sideEffects": "unsafe-to-replay",
+  "$idempotencyComment": "A retry is a no-op only when the replacement does not itself contain the searched text; when it does, a retry replaces again.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/documents/{documentId}:batchUpdate",
+    "encoding": "json"
+  },
+  "config": [
+    {
+      "type": "text",
+      "key": "documentId",
+      "label": "Document ID",
+      "required": true,
+      "description": "From document_create's data.documentId, or the id in the document's own URL.",
+      "send": {
+        "in": "path",
+        "as": "documentId",
+        "value": "string"
+      }
+    },
+    {
+      "type": "text",
+      "key": "find",
+      "label": "Find",
+      "required": true,
+      "description": "The exact text to find, e.g. {{name}}. Not a regular expression.",
+      "send": {
+        "as": "requests.0.replaceAllText.containsText.text",
+        "value": "string"
+      }
+    },
+    {
+      "type": "textarea",
+      "key": "replaceWith",
+      "label": "Replace with",
+      "required": true,
+      "description": "Inserted in place of every match. Empty is refused: to delete text, use batch_update.",
+      "send": {
+        "as": "requests.0.replaceAllText.replaceText",
+        "value": "string"
+      }
+    },
+    {
+      "type": "switch",
+      "key": "matchCase",
+      "label": "Match case",
+      "default": false,
+      "description": "Off matches case-insensitively, which is also what Google does when it is not sent.",
+      "send": {
+        "as": "requests.0.replaceAllText.containsText.matchCase",
+        "value": "boolean"
+      }
+    },
+    {
+      "type": "text",
+      "key": "requiredRevisionId",
+      "label": "Required revision ID",
+      "description": "Optional. The document's revisionId as you last read it. If the document has changed since, Google refuses the whole batch with a 400 instead of applying it to content you have not seen.",
+      "send": {
+        "as": "writeControl.requiredRevisionId",
+        "value": "string"
+      }
+    }
+  ],
+  "outputShape": [
+    {
+      "path": "data.documentId",
+      "type": "string",
+      "description": "The document updated."
+    },
+    {
+      "path": "data.replies",
+      "type": "array",
+      "description": "One reply."
+    },
+    {
+      "path": "data.replies.0.replaceAllText.occurrencesChanged",
+      "type": "number",
+      "description": "How many occurrences were replaced. 0 means the text was not found, which is not an error."
+    },
+    {
+      "path": "data.writeControl.requiredRevisionId",
+      "type": "string",
+      "description": "The document's revision after the update."
+    },
+    {
+      "path": "mode",
+      "type": "string",
+      "description": "Which estate this ran against. Google has no sandbox, so: fake or live."
+    }
+  ],
+  "contract": {
+    "sends": [
+      "documentId",
+      "requests",
+      "writeControl"
+    ],
+    "reads": [
+      "documentId",
+      "replies",
+      "writeControl"
+    ]
+  }
+}

@@ -25,6 +25,22 @@ import { fakeRequest } from "@particle-academy/fancy-connector-core";
 
 import { googleDocsFaker } from "../src/faker.js";
 
+test("batch_update fakes the shape Google Docs publishes", () => {
+  const config = {};
+
+  const faked = googleDocsFaker("batch_update", fakeRequest("google_docs", "batch_update", config));
+
+  assert.deepEqual(faked, {
+    "documentId": "1Doc_fake_b17d7d2cc5c6",
+    "replies": [
+      {}
+    ],
+    "writeControl": {
+      "requiredRevisionId": "4358d3e77da7f1d5"
+    }
+  });
+});
+
 test("document_create fakes the shape Google Docs publishes", () => {
   const config = {};
 
@@ -46,6 +62,26 @@ test("text_insert fakes the shape Google Docs publishes", () => {
     "replies": [
       {}
     ]
+  });
+});
+
+test("text_replace fakes the shape Google Docs publishes", () => {
+  const config = {};
+
+  const faked = googleDocsFaker("text_replace", fakeRequest("google_docs", "text_replace", config));
+
+  assert.deepEqual(faked, {
+    "documentId": "1Doc_fake_97719d3c3e1f",
+    "replies": [
+      {
+        "replaceAllText": {
+          "occurrencesChanged": 6
+        }
+      }
+    ],
+    "writeControl": {
+      "requiredRevisionId": "3bb5512da3878545"
+    }
   });
 });
 
