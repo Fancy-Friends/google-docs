@@ -24,7 +24,7 @@ from .actions.text_replace import text_replace
 from .faker import respond
 from .service import BASE_URLS, CONNECTOR_API_VERSION, REQUIRES, SANDBOX, SERVICE, TITLE, descriptor
 
-__version__ = "0.7.1"
+__version__ = "0.7.2"
 
 __all__ = [
     "BASE_URLS",
